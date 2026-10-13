@@ -10,11 +10,19 @@ import { test } from "node:test";
  * and manifest drifting apart, which in the real app shows up as a view that silently never appears.
  *
  * Node's own test runner, and no test dependency at all — the bundle's only imports are the ones the host
- * provides (`vue`, `@tanstack/vue-query`), and those resolve here from devDependencies. If this import ever fails
- * for a missing package, the bundle is carrying an import the host does not publish, which is a real bug: it
- * would throw inside the browser's blob-URL import, where the failure is far less obvious than here. */
+ * provides (`vue`, `@tanstack/vue-query`, `@intentic/extension-ui`), and those resolve here from the package's own
+ * dependencies. If this import ever fails for a missing package, the bundle is carrying an import the host does not
+ * publish, which is a real bug: it would throw inside the browser's blob-URL import, where the failure is far less
+ * obvious than here. */
 
 const manifest = JSON.parse(await readFile(new URL(`../intentic-extension.json`, import.meta.url), `utf8`));
+
+/* The kit's components are the app's own instances: the npm package only reads them off the bridge the host
+ * publishes, and throws without one. Stood up before the bundle loads, as the app does; nothing here renders. */
+globalThis.__intenticHost = {
+    modules: { "@intentic/extension-ui": new Proxy({}, { get: (_, name) => ({ __stub: name }) }) },
+};
+
 const { activate } = await import(`../dist/extension.js`);
 
 const declaredViews = new Set((manifest.contributes?.views ?? []).map((view) => view.id));
