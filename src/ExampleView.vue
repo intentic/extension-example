@@ -5,27 +5,10 @@ import { markSeen } from "./badge";
 import { NOTES_PATH } from "./notes";
 import { useNotes } from "./useNotes";
 
-/* The rail view. Mounted by the host at /ext/example with `repo` (and any Activation props) bound — this
- * activation is workspace-wide, so it takes none.
- *
- * ON STYLING, which is the one place a git-installed extension differs from a first-party one. The app's
- * Tailwind build scans its own sources and the first-party extension packages; it cannot scan a bundle it
- * doesn't build, so utility classes in a third-party view resolve only by accident — whichever ones the app uses
- * elsewhere. What IS reliably available is everything the design system SHIPS as authored CSS: the `.ui-*`
- * component classes (`.ui-page`, `.ui-card`, `.ui-field`, `.ui-code`), the `.skeleton` class every loading
- * placeholder is painted with, and the role tokens behind them (`--color-card`, `--color-content`,
- * `--color-muted`, `--color-line`), which flip with the light/dark scheme on their own. So this view is built from
- * those, and it recolors with the shell for free.
- *
- * Note also that vite's lib build emits an SFC style block as a SEPARATE css asset, and the loader imports one
- * JS file from a blob URL — nothing fetches that asset. So: style inline, or inject a sheet from activate().
- *
- * ON LOADING: a placeholder in the list's own shape rather than a "Loading…" line, from two pieces of
- * @intentic/extension-ui. `v-skeleton-source="name"` marks the ONE element the placeholder stands in for (here the
- * list, and the empty card that takes its place); once that element has settled, its layout is remembered for this
- * sandbox. The next time the read is in flight, `<SkeletonSnapshot of="name">` draws that layout back: as many cards
- * as there were, each line as long as it was, no words. Its slot, a hand-drawn placeholder, shows only until there
- * is a layout to draw. Prefix the name with your extension's id, since every extension's names share one store. */
+/* Workspace-wide rail view at /ext/example. Use shipped .ui-* CSS, .skeleton and role tokens: the host cannot scan third-party Tailwind classes.
+ * Library-build SFC CSS is a separate asset the blob loader never fetches; style inline or inject a sheet from activate().
+ * v-skeleton-source marks the one element remembered per sandbox; SkeletonSnapshot redraws it, using its fallback until a layout is stored.
+ * Prefix snapshot names with the extension id because all extensions share the store. */
 
 const { all, shown, limit, isLoading } = useNotes();
 
