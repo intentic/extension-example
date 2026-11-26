@@ -45,17 +45,18 @@ watch(all, (notes) => markSeen(notes.length));
 
         <!-- Both answers carry the source, so an empty sandbox remembers an empty card rather than three notes. Never
              the placeholder itself: it would remember its own bars. -->
-        <div v-else-if="shown.length === 0" v-skeleton-source="`example.notes`" class="ui-card ui-card-dashed" :style="{ marginTop: `1rem` }">
-            <p :style="{ color: `var(--color-muted)` }">
-                No notes yet. Ask the agent to <em>leave an example note</em>, or run <code class="ui-code">intentic-example add "hello"</code> in a
-                terminal.
-            </p>
-        </div>
+        <p
+            v-else-if="shown.length === 0"
+            v-skeleton-source="`example.notes`"
+            class="ui-card ui-card-dashed"
+            :style="{ marginTop: `1rem`, color: `var(--color-muted)` }"
+        >
+            No notes yet. Ask the agent to <em>leave an example note</em>, or run <code class="ui-code">intentic-example add "hello"</code> in a terminal.
+        </p>
 
         <ul v-else v-skeleton-source="`example.notes`" :style="LIST">
-            <li v-for="note in shown" :key="note.at" class="ui-card">
-                <div :style="{ color: `var(--color-content)` }">{{ note.text }}</div>
-                <div :style="{ color: `var(--color-muted)`, fontSize: `0.75rem`, marginTop: `0.25rem` }">{{ note.at }}</div>
+            <li v-for="note in shown" :key="note.at" class="ui-card" :style="{ color: `var(--color-content)` }">
+                {{ note.text }}<div :style="{ color: `var(--color-muted)`, fontSize: `0.75rem`, marginTop: `0.25rem` }">{{ note.at }}</div>
             </li>
         </ul>
 
